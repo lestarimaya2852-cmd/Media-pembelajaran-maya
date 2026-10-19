@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rahasia Bentuk Molekul H₂O</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bezel:#13334A; --sky:#4AA3E0; --skylight:#CFE9FA; --bg:#EAF6FD;
+  --ink:#13334A; --sub:#30506A; --card:#FFFFFF; --peb:#F2C75C;
+  --good:#2E8B57; --bad:#C0392B;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;}
+html,body{height:auto;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0; background:var(--bg); color:var(--ink); font-family:'Inter',system-ui,sans-serif;
+  display:flex; flex-direction:column; align-items:center; min-height:100%;
+}
+h1,h2,h3{ font-family:'Space Grotesk',system-ui,sans-serif; font-weight:700; margin:0 0 8px; }
+.app{ width:min(94vw,460px); display:flex; flex-direction:column; min-height:100vh; padding:14px 0 18px; }
+.topbar{ display:flex; align-items:center; gap:10px; padding:4px 4px 14px; }
+.topbar .label{ font-size:12px; color:var(--sub); font-weight:600; white-space:nowrap; }
+.track{ flex:1; height:6px; background:var(--skylight); border-radius:99px; overflow:hidden; }
+.fill{ height:100%; background:var(--sky); border-radius:99px; transition:width .35s ease; }
+
+.phone-wrap{ flex:none; display:block; position:relative; }
+.phone{
+  flex:none; width:100%; background:var(--card); border:2px solid var(--bezel); border-radius:26px;
+  padding:22px 20px; display:flex; flex-direction:column; position:relative;
+  overflow:visible; min-height:70vh;
+}
+.phone > section > *{ flex-shrink:0; }
+section > *{ flex-shrink:0; }
+section{ display:none; flex:1; flex-direction:column; animation:fade .25s ease; }
+section.active{ display:flex; }
+@keyframes fade{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+.eyebrow{ font-size:12px; font-weight:600; color:var(--sky); margin-bottom:6px; }
+p{ line-height:1.55; color:var(--sub); font-size:14.5px; margin:0 0 10px; }
+.center{ text-align:center; margin:auto 0; }
+.card{ background:var(--skylight); border-radius:16px; padding:14px 16px; margin-bottom:10px; }
+.card b{ color:var(--ink); }
+
+button{
+  font-family:'Inter',sans-serif; font-weight:600; font-size:14px; cursor:pointer;
+  border-radius:12px; border:2px solid var(--bezel); padding:12px 16px;
+}
+.btn-primary{ background:var(--sky); color:#fff; }
+.btn-ghost{ background:#fff; color:var(--bezel); }
+.btn-primary:focus-visible, .btn-ghost:focus-visible{ outline:3px solid #2E6C99; outline-offset:2px; }
+button:disabled{ opacity:.45; cursor:not-allowed; }
+.navrow{ display:flex; gap:10px; margin-top:16px; }
+.navrow button{ flex:1; }
+
+.atom-hero{ width:84px; height:84px; margin:10px auto 16px; }
+.corner-logo{ position:absolute; width:20px; height:20px; opacity:.9; z-index:3; pointer-events:none; }
+.corner-logo.tl{ top:2px; left:10px; }
+.corner-logo.br{ bottom:6px; right:10px; }
+.option{
+  display:block; width:100%; text-align:left; background:#fff; border:2px solid var(--skylight);
+  border-radius:12px; padding:10px 12px; margin-bottom:8px; font-size:14px; color:var(--ink); cursor:pointer;
+}
+.option.correct{ border-color:var(--good); background:#EAF7EF; }
+.option.wrong{ border-color:var(--bad); background:#FBEAEA; }
+.feedback{ font-size:13.5px; margin:8px 0 2px; font-weight:600; }
+.feedback.good{ color:var(--good); } .feedback.bad{ color:var(--bad); }
+.qprog{ font-size:12px; color:var(--sub); margin-bottom:6px; font-weight:600; }
+
+.stage{ position:relative; width:100%; height:260px; flex-shrink:0; margin:0 auto 10px;
+  background:radial-gradient(circle at 50% 35%, #fff 0%, var(--skylight) 70%);
+  border-radius:18px; border:2px solid var(--bezel); overflow:hidden; touch-action:none; cursor:grab; }
+.stage canvas{ display:block; width:100%; height:100%; }
+.badge{ position:absolute; top:8px; left:10px; background:var(--bezel); color:#fff; font-size:10.5px;
+  padding:3px 8px; border-radius:999px; font-weight:600; }
+textarea{ width:100%; border:2px solid var(--skylight); border-radius:12px; padding:10px; font-family:inherit;
+  font-size:13.5px; resize:vertical; min-height:54px; margin-bottom:8px; }
+.score{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:30px; text-align:center; margin:6px 0 2px; }
+.status{ text-align:center; font-weight:600; margin-bottom:12px; }
+.status.good{ color:var(--good);} .status.bad{ color:var(--bad);}
+
+.shape-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:4px 0 8px; }
+.shape-btn{ background:#fff; color:var(--ink); border:2px solid var(--skylight); border-radius:12px; padding:10px 8px; font-size:13.5px; text-align:center; }
+.shape-btn.sel{ border-color:var(--bezel); background:var(--skylight); }
+.shape-btn.correct{ border-color:var(--good); background:#EAF7EF; }
+.shape-btn.wrong{ border-color:var(--bad); background:#FBEAEA; }
+.angle-tag{ position:absolute; bottom:8px; left:10px; background:#fff; color:var(--ink); border:1.5px solid var(--bezel); font-size:11px; padding:3px 8px; border-radius:999px; font-weight:600; }
+
+.legend{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; font-size:11.5px; color:var(--sub); margin:0 0 8px; }
+.legend i{ display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:4px; vertical-align:-1px; border:1px solid #13334A; }
+.home-btn{ width:52px; height:52px; border-radius:50%; padding:0; display:inline-flex; align-items:center; justify-content:center; background:#fff; color:var(--bezel); }
+.home-btn[aria-expanded="true"]{ background:var(--bezel); color:#fff; }
+.menu-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; }
+.menu-btn{ background:#fff; color:var(--bezel); border:2px solid var(--bezel); border-radius:10px; padding:8px 4px; font-size:11.5px; line-height:1.25; }
+.menu-btn b{ display:block; font-size:14px; color:var(--sky); }
+
+.term{ padding:0; overflow:hidden; flex-shrink:0; }
+.term-head{ display:block; width:100%; background:none; border:none; border-radius:0; box-shadow:none; text-align:left; padding:14px 16px; color:inherit; font:inherit; font-size:14px; line-height:1.5; cursor:pointer; }
+.term-hint{ display:block; width:fit-content; margin-top:10px; font-size:12px; font-weight:600; color:#2E6C99; background:#fff; border:1.5px solid var(--sky); border-radius:99px; padding:4px 12px; }
+.term-ill{ display:none; margin:0 12px 12px; padding:10px; background:#fff; border-radius:14px; border:1.5px solid #fff; text-align:center; animation:termIn .25s ease; }
+.term.open .term-ill{ display:block; }
+.term-ill svg{ display:block; width:100%; max-width:280px; height:auto; margin:0 auto; }
+.term-ill .cap{ font-size:12.5px; color:var(--sub); margin:8px 0 0; line-height:1.45; }
+@keyframes termIn{ from{opacity:0; transform:translateY(-4px);} to{opacity:1; transform:none;} }
+.stepper-row{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin:0 0 8px; background:var(--skylight); border-radius:12px; padding:6px 10px; }
+.stepper-row > span{ font-size:13px; font-weight:600; color:var(--ink); }
+.stepper{ display:flex; align-items:center; gap:10px; }
+.stepper button{ width:34px; height:34px; border-radius:50%; padding:0; font-size:20px; line-height:1; background:#fff; color:var(--bezel); border:2px solid var(--bezel); display:inline-flex; align-items:center; justify-content:center; }
+.stepper button:disabled{ opacity:.35; }
+.stepper b{ min-width:18px; text-align:center; font-size:16px; }
+footer{ font-size:11px; color:#5A7D99; margin-top:10px; text-align:center; }
+.logo-frame{ position:fixed; inset:0; display:flex; justify-content:center; pointer-events:none; z-index:50; }
+.logo-inner{ position:relative; width:min(94vw,460px); height:100%; }
+.lg{ position:absolute; width:34px; height:34px; background:#fff; border:1.5px solid var(--bezel); border-radius:50%; padding:4px; opacity:.95; box-shadow:0 1px 4px #0003; }
+.lg.tl{ top:calc(env(safe-area-inset-top,0px) + 6px); left:0; }
+.lg.br{ bottom:calc(env(safe-area-inset-bottom,0px) + 8px); right:0; }
+.topbar{ padding-left:42px !important; }
+.app{ padding-bottom:62px !important; }
+</style>
+</head>
+<body>
+<div class="logo-frame" aria-hidden="true"><div class="logo-inner">
+<svg class="lg tl" viewBox="0 0 100 100"><g stroke="#2E6C99" stroke-width="6" fill="none"><path d="M50 14L80 31L80 65L50 82L20 65L20 31Z"/><path d="M50 14L50 2M80 65L94 72M20 65L6 72"/></g><g fill="#13334A"><circle cx="50" cy="14" r="9"/><circle cx="80" cy="65" r="9"/><circle cx="20" cy="65" r="9"/></g><g fill="#4AA3E0"><circle cx="80" cy="31" r="9"/><circle cx="50" cy="82" r="9"/><circle cx="20" cy="31" r="9"/></g></svg>
+<svg class="lg br" viewBox="0 0 100 100"><g stroke="#2E6C99" stroke-width="8"><path d="M50 40L24 72M50 40L76 72"/></g><circle cx="50" cy="36" r="20" fill="#13334A"/><circle cx="22" cy="74" r="13" fill="#CFE9FA" stroke="#2E6C99" stroke-width="4"/><circle cx="78" cy="74" r="13" fill="#CFE9FA" stroke="#2E6C99" stroke-width="4"/></svg>
+</div></div>
+<div class="app">
+  <div class="topbar">
+    <div class="label" id="stepLabel">1 / 10</div>
+    <div class="track"><div class="fill" id="fill" style="width:10%"></div></div>
+  </div>
+
+  <div class="phone-wrap">
+    <section data-step="1" class="active center">
+      <h1>Rahasia Bentuk Molekul H₂O</h1>
+      <p>Media pembelajaran interaktif — Teori VSEPR &amp; Hibridisasi<br>Disusun oleh Maya Lestari</p>
+      <div class="navrow"><button class="btn-primary" style="width:100%" onclick="go(2)">Mulai</button></div>
+    </section>
+
+    <section data-step="2">
+      <div class="eyebrow">Tujuan Pembelajaran</div>
+      <h2>Satu target utama kita</h2>
+      <div class="card"><p style="margin:0"><b>Siswa mampu menentukan bentuk molekul H₂O berdasarkan teori VSEPR</b> — menggunakan konsep domain elektron, PEI, dan PEB.</p></div>
+      <p>Semua tahap setelah ini dirancang untuk mengantarkan kita ke satu kemampuan itu.</p>
+      <div class="navrow"><button class="btn-ghost" onclick="go(1)">Kembali</button><button class="btn-primary" onclick="go(3)">Lanjut</button></div>
+    </section>
+
+    <section data-step="3">
+      <div class="eyebrow">Apersepsi</div>
+      <h2>Kok bisa nggak tenggelam?</h2>
+      <p>Pernah lihat serangga kecil berjalan santai di atas permukaan air tanpa tenggelam? Ternyata, rahasianya berawal dari <b>bentuk molekul air</b>.</p>
+      <svg viewBox="0 0 200 110" style="width:100%;max-width:260px;margin:2px auto 8px;display:block" role="img" aria-label="Serangga pengendara air berjalan di atas permukaan air">
+        <circle cx="168" cy="20" r="9" fill="#F2C75C" opacity=".8"/>
+        <path d="M0 70 Q25 65 50 70 T100 70 T150 70 T200 70 L200 110 L0 110 Z" fill="#4AA3E0" opacity=".35"/>
+        <path d="M0 70 Q25 65 50 70 T100 70 T150 70 T200 70" fill="none" stroke="#4AA3E0" stroke-width="2.5"/>
+        <g fill="none" stroke="#2E6C99" stroke-width="1.5">
+          <ellipse cx="52" cy="71" rx="9" ry="3"/><ellipse cx="80" cy="71" rx="9" ry="3"/>
+          <ellipse cx="125" cy="71" rx="9" ry="3"/><ellipse cx="150" cy="71" rx="9" ry="3"/>
+        </g>
+        <g fill="none" stroke="#13334A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="94,50 80,36 80,68"/>
+          <polyline points="92,52 70,44 52,68"/>
+          <polyline points="108,50 124,36 125,68"/>
+          <polyline points="110,52 134,46 150,68"/>
+          <polyline points="114,48 126,42 136,42"/>
+          <polyline points="96,48 86,41 76,42"/>
+        </g>
+        <ellipse cx="101" cy="52" rx="17" ry="5.5" fill="#13334A"/>
+        <circle cx="120" cy="49" r="4.5" fill="#13334A"/>
+        <circle cx="122" cy="48" r="1.2" fill="#fff"/>
+        <text x="8" y="22" font-size="9" fill="#30506A" font-family="Inter,sans-serif">serangga pengendara air</text>
+        <text x="8" y="100" font-size="9" fill="#13334A" font-family="Inter,sans-serif">permukaan air</text>
+        <text x="172" y="100" font-size="16" fill="#13334A" font-family="Space Grotesk,sans-serif" font-weight="700">?</text>
+      </svg>
+      <p>Coba tebak: menurutmu molekul air (H₂O) bentuknya <b>lurus</b> atau <b>bengkok</b>?</p>
+      <div class="card">Tulis tebakanmu di bawah. Jawaban apa pun boleh, nanti kita buktikan bersama di tahap berikutnya.</div>
+      <textarea id="apersepsiInput" placeholder="Menurutku bentuk H₂O itu..."></textarea>
+      <div class="navrow"><button class="btn-ghost" onclick="go(2)">Kembali</button><button class="btn-primary" id="aperLanjutBtn" onclick="go(4)" disabled>Lanjut</button></div>
+    </section>
+
+    <section data-step="4">
+      <div class="eyebrow">Pengenalan Konsep</div>
+      <h2>Pengertian Konsep Utama</h2>
+      <p>Teori <b>VSEPR</b> (Valence Shell Electron Pair Repulsion) menjelaskan bahwa bentuk suatu molekul ditentukan oleh tolak-menolak antar pasangan elektron di sekitar atom pusat. Pasangan elektron akan saling menjauh sejauh mungkin agar tolakannya seminimal mungkin — susunan inilah yang akhirnya menentukan geometri molekul.</p>
+      <h2 style="margin-top:4px">Istilah yang perlu kamu tahu</h2>
+      <div class="card term"><button class="term-head" type="button" onclick="toggleTerm(this)" aria-expanded="false"><b>Domain elektron</b> — Daerah ditemukannya elektron di sekitar atom pusat, meliputi pasangan elektron bebas (PEB) dan pasangan elektron ikatan (PEI), baik ikatan tunggal, rangkap dua, maupun rangkap tiga.<span class="term-hint">Ketuk untuk lihat ilustrasi ▾</span></button><div class="term-ill"><svg viewBox="0 0 200 112">
+<g fill="none" stroke="#E07B39" stroke-width="1.3" stroke-dasharray="4 3">
+ <ellipse cx="75" cy="36.5" rx="31" ry="12" transform="rotate(24.7 75 36.5)"/>
+ <ellipse cx="125" cy="36.5" rx="31" ry="12" transform="rotate(-24.7 125 36.5)"/>
+ <ellipse cx="78" cy="82" rx="19" ry="13"/><ellipse cx="122" cy="82" rx="19" ry="13"/>
+</g>
+<line x1="100" y1="48" x2="50" y2="25" stroke="#2E6C99" stroke-width="3"/><line x1="100" y1="48" x2="150" y2="25" stroke="#2E6C99" stroke-width="3"/>
+<circle cx="100" cy="48" r="13" fill="#13334A"/>
+<circle cx="50" cy="25" r="8" fill="#CFE9FA" stroke="#2E6C99" stroke-width="2"/><circle cx="150" cy="25" r="8" fill="#CFE9FA" stroke="#2E6C99" stroke-width="2"/>
+<circle cx="72" cy="82" r="5" fill="#F2C75C"/><circle cx="84" cy="82" r="5" fill="#F2C75C"/>
+<circle cx="116" cy="82" r="5" fill="#F2C75C"/><circle cx="128" cy="82" r="5" fill="#F2C75C"/>
+<g font-size="9" font-weight="700" fill="#E07B39" text-anchor="middle" font-family="Inter,sans-serif">
+ <text x="64" y="14">1</text><text x="136" y="14">2</text><text x="78" y="103">3</text><text x="122" y="103">4</text>
+</g></svg><p class="cap">Contoh H₂O: 4 daerah elektron (lingkaran putus-putus) = 4 domain.</p></div></div>
+      <div class="card term"><button class="term-head" type="button" onclick="toggleTerm(this)" aria-expanded="false"><b>PEI</b> (Pasangan Elektron Ikatan) — elektron yang dipakai untuk membentuk ikatan ke atom lain.<span class="term-hint">Ketuk untuk lihat ilustrasi ▾</span></button><div class="term-ill"><svg viewBox="0 0 200 112">
+<line x1="70" y1="52" x2="132" y2="52" stroke="#2E6C99" stroke-width="3"/>
+<circle cx="64" cy="52" r="22" fill="#13334A"/>
+<circle cx="140" cy="52" r="14" fill="#CFE9FA" stroke="#2E6C99" stroke-width="2"/>
+<circle cx="100" cy="46" r="4.5" fill="#E07B39"/><circle cx="100" cy="58" r="4.5" fill="#E07B39"/>
+<g font-size="9.5" fill="#13334A" text-anchor="middle" font-family="Inter,sans-serif">
+ <text x="64" y="56" fill="#fff" font-weight="700">O</text><text x="140" y="56" font-weight="700">H</text>
+ <text x="100" y="86" font-weight="700">1 pasang PEI</text>
+ <text x="100" y="98" fill="#30506A">dipakai bersama O dan H</text>
+</g></svg><p class="cap">Dua elektron (titik oranye) dipakai bersama untuk membentuk satu ikatan.</p></div></div>
+      <div class="card term"><button class="term-head" type="button" onclick="toggleTerm(this)" aria-expanded="false"><b>PEB</b> (Pasangan Elektron Bebas) — elektron milik atom pusat yang tidak dipakai berikatan.<span class="term-hint">Ketuk untuk lihat ilustrasi ▾</span></button><div class="term-ill"><svg viewBox="0 0 200 112">
+<g stroke="#2E6C99" stroke-width="3"><line x1="100" y1="46" x2="60" y2="22"/><line x1="100" y1="46" x2="140" y2="22"/></g>
+<circle cx="100" cy="46" r="14" fill="#13334A"/>
+<circle cx="60" cy="22" r="8" fill="#CFE9FA" stroke="#2E6C99" stroke-width="2"/><circle cx="140" cy="22" r="8" fill="#CFE9FA" stroke="#2E6C99" stroke-width="2"/>
+<g fill="#F2C75C" stroke="#E0A92A" stroke-width="1"><circle cx="66" cy="74" r="5.5"/><circle cx="78" cy="79" r="5.5"/><circle cx="122" cy="79" r="5.5"/><circle cx="134" cy="74" r="5.5"/></g>
+<g fill="none" stroke="#E0A92A" stroke-width="1.2" stroke-dasharray="3 2"><ellipse cx="72" cy="77" rx="15" ry="10" transform="rotate(22 72 77)"/><ellipse cx="128" cy="77" rx="15" ry="10" transform="rotate(-22 128 77)"/></g>
+<g font-size="9.5" fill="#13334A" text-anchor="middle" font-family="Inter,sans-serif">
+ <text x="100" y="98" font-weight="700">2 pasang PEB pada atom O</text>
+ <text x="100" y="109" fill="#30506A">tidak dipakai berikatan</text>
+</g></svg><p class="cap">Elektron kuning tetap menjadi milik atom O dan tidak membentuk ikatan.</p></div></div>
+      <div class="navrow"><button class="btn-ghost" onclick="go(3)">Kembali</button><button class="btn-primary" onclick="go(5)">Lanjut</button></div>
+    </section>
+
+    <section data-step="5">
+      <div class="eyebrow">Materi Inti</div>
+      <h2 id="matTitle">1. Hitung Domain Elektron Atom Pusat O (pada Molekul H<sub>2</sub>O)</h2>
+      <div id="matBody" style="line-height:1.55;color:var(--sub);font-size:14.5px;margin:0 0 10px"><ul style='margin:0;padding-left:18px'><li>Elektron Valensi O = <b>6</b> elektron.</li><li>Jumlah PEI = <b>2</b> pasang (2 elektron digunakan untuk membentuk 2 ikatan tunggal dengan atom H).</li><li>Jumlah PEB = <b>2</b> pasang (sisa 4 elektron yang tidak digunakan berikatan).</li><li>Total Domain = <b>2 PEI + 2 PEB = 4</b></li></ul></div>
+      <div id="matImg" style="margin:2px auto 4px"><div class="stage" id="stage3" style="margin-bottom:6px"><span class="badge" id="modeBadge3">Model 3D</span><canvas id="c3"></canvas></div><div class="legend"><span><i style="background:#13334A"></i>Atom O</span><span><i style="background:#DCEFFB"></i>Atom H</span><span><i style="background:#F2C75C"></i>PEB</span><span style="font-style:italic">geser ke segala arah untuk memutar 360°</span></div></div>
+      <div class="card" id="matExample" style="font-size:13px"></div>
+      <div class="qprog" id="matProg">Langkah 1 dari 4</div>
+      <div class="navrow">
+        <button class="btn-ghost" onclick="matStep(-1)">Sebelumnya</button>
+        <button class="btn-primary" onclick="matStep(1)">Berikutnya</button>
+      </div>
+      <div class="navrow"><button class="btn-ghost" onclick="go(4)">Kembali ke Konsep</button><button class="btn-primary" onclick="go(6)">Ke Eksplorasi</button></div>
+    </section>
+
+    <section data-step="6">
+      <div class="eyebrow">Eksplorasi Interaktif</div>
+      <h2>Lihat sendiri bentuknya</h2>
+      <p style="margin-bottom:8px"><b>Yang perlu kamu amati:</b> posisi 2 atom H saat PEB disembunyikan vs saat 4 domain elektron ditampilkan, dan perubahan sudut antar ikatannya.</p>
+      <div class="stage" id="stage"><span class="badge" id="modeBadge">Geometri molekul</span><canvas id="c"></canvas></div>
+      <p style="font-size:12px;text-align:center;margin:-4px 0 8px">↻ Geser ke segala arah untuk memutar 360°</p>
+      <p id="descText" style="min-height:48px">Geser model untuk memutar. PEB disembunyikan → bentuk molekul <b>V (bengkok)</b>, sudut ≈104,5°.</p>
+      <div class="navrow"><button class="btn-ghost" id="toggleBtn" onclick="togglePEB()">Tampilkan PEB</button></div>
+      <p class="eyebrow" style="margin-top:10px">Cek pemahamanmu dari simulasi di atas</p>
+      <div id="simQuizBox"></div>
+      <div class="navrow"><button class="btn-ghost" onclick="go(5)">Kembali</button><button class="btn-primary" id="simNextBtn" onclick="go(7)" disabled>Ke Latihan</button></div>
+    </section>
+
+    <section data-step="7">
+      <div class="eyebrow">Latihan Interaktif</div>
+      <h2>Susun molekulnya sendiri</h2>
+      <p style="margin-bottom:8px"><b>Soal:</b> Apa bentuk molekul H₂O? Buktikan dengan menyusunnya: tambah atau kurangi atom terikat dan PEB di sekitar atom O (boleh lebih dari 2, silakan bereksperimen!). Untuk H₂O, atur juga sudutnya dengan penggeser. Model bisa diputar 360° ke segala arah dengan menggeser.</p>
+      <div class="stage" id="stage2"><span class="badge" id="modeBadge2">Atom O saja</span><canvas id="c2"></canvas><span class="angle-tag" id="angleTag" style="display:none"></span></div>
+      <div class="stepper-row"><span>Atom terikat (PEI)</span><div class="stepper"><button id="hMinus" onclick="chg('nH',-1)" aria-label="Kurangi atom">−</button><b id="hCount">0</b><button id="hPlus" onclick="chg('nH',1)" aria-label="Tambah atom">+</button></div></div>
+      <div class="stepper-row"><span>PEB pada atom pusat O</span><div class="stepper"><button id="pMinus" onclick="chg('nP',-1)" aria-label="Kurangi PEB">−</button><b id="pCount">0</b><button id="pPlus" onclick="chg('nP',1)" aria-label="Tambah PEB">+</button></div></div>
+      <button class="shape-btn" id="resetBtn" onclick="resetBuild()" style="width:100%;margin-bottom:8px">↺ Ulang dari awal</button>
+      <p id="shapeInfo" style="min-height:44px;margin-bottom:6px"></p>
+      <label for="angleSlider" style="font-size:12.5px;color:var(--sub);font-weight:600">Atur sudut H–O–H: <span id="angleVal">180</span>°</label>
+      <input type="range" id="angleSlider" min="90" max="180" step="0.5" value="180" disabled style="width:100%;margin:4px 0 8px">
+      <div class="navrow" style="margin-top:0"><button class="btn-primary" id="checkShapeBtn" onclick="checkShape()" style="width:100%">Periksa Susunan</button></div>
+      <div class="feedback" id="shapeFb"></div>
+      <div class="navrow"><button class="btn-ghost" onclick="go(6)">Kembali</button><button class="btn-primary" id="latihanNextBtn" onclick="go(8)" disabled>Ke Evaluasi</button></div>
+    </section>
+
+    <section data-step="8">
+      <div class="eyebrow">Evaluasi</div>
+      <h2>Petunjuk Pengerjaan Evaluasi</h2>
+      <p>Soal evaluasi dikerjakan lewat Google Form terpisah supaya hasilnya otomatis tercatat. Klik tombol di bawah, kerjakan semua soalnya, lalu kembali ke sini untuk melanjutkan.</p>
+      <div class="card"><p style="margin:0">📋 Soal terdiri dari beberapa pertanyaan tentang bentuk molekul H₂O berdasarkan teori VSEPR. Kerjakan sendiri dan jujur ya!</p></div>
+      <div class="navrow">
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfrURsgT4ScN3DnsR9MaPmq-waxy2IC-ucgq9EC1BI9Pg5uDQ/viewform?usp=publish-editor" target="_blank" rel="noopener" class="btn-primary" style="flex:1;display:flex;align-items:center;justify-content:center;text-decoration:none">Buka Soal Evaluasi</a>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--sub);margin-top:14px">
+        <input type="checkbox" id="evalDoneCheck" style="width:16px;height:16px">
+        Saya sudah selesai mengerjakan soal evaluasi
+      </label>
+      <div class="navrow"><button class="btn-ghost" onclick="go(7)">Kembali</button><button class="btn-primary" id="evalNextBtn" onclick="go(9)" disabled>Lanjut</button></div>
+    </section>
+
+    <section data-step="9" class="center">
+      <div class="eyebrow">Hasil &amp; Refleksi</div>
+      <h2>Yuk, refleksikan belajarmu</h2>
+      <p>Evaluasi sudah kamu kerjakan lewat form tadi — hasilnya bisa dicek oleh gurumu di sana. Sekarang coba refleksikan proses belajarmu di media ini.</p>
+      <div class="card" style="text-align:left">
+        <p style="margin:0 0 6px"><b>Refleksi singkat:</b></p>
+        <textarea id="refleksi1" placeholder="Apa yang sudah aku pahami dari materi ini?"></textarea>
+        <textarea id="refleksi2" placeholder="Bagian mana yang masih sulit buatku?"></textarea>
+        <textarea id="refleksi3" placeholder="Apa hubungan bentuk H₂O dengan kehidupan sehari-hari?"></textarea>
+      </div>
+      <div class="navrow"><button class="btn-ghost" onclick="go(8)">Kembali</button><button class="btn-primary" id="hasilLanjutBtn" onclick="go(10)" disabled>Lanjut</button></div>
+    </section>
+
+    <section data-step="10" class="center">
+      <h1>Terima kasih telah belajar!</h1>
+      <p>Sekarang kamu tahu kenapa air berbentuk bengkok — dan itu penting banget buat sifatnya sebagai pelarut kehidupan. Teruslah penasaran dan jangan takut bertanya "kenapa" pada hal-hal kecil di sekitarmu — dari situlah sains dimulai.</p>
+      <div class="card" style="text-align:left">
+        <p style="margin:0"><b>Disusun oleh:</b> Maya Lestari<br>Program Studi Pendidikan Kimia — Universitas Sriwijaya</p>
+      </div>
+      <div class="navrow"><button class="btn-primary" style="width:100%" id="finishBtn" onclick="finishMedia()">Selesai</button></div>
+      <p id="finishMsg" style="display:none; margin-top:10px; font-weight:600; color:var(--good)">Media pembelajaran selesai. Kamu boleh menutup halaman ini sekarang 👋</p>
+      <div style="margin-top:14px; text-align:center">
+        <button class="home-btn" id="homeBtn" onclick="toggleMenu()" aria-expanded="false" aria-controls="menuPanel" aria-label="Buka menu navigasi">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>
+        </button>
+        <div style="font-size:12px; color:var(--sub); margin-top:4px">Menu</div>
+      </div>
+      <div class="card" id="menuPanel" style="text-align:left; margin-top:10px; display:none">
+        <button class="btn-primary" style="width:100%; margin:0 0 10px" onclick="go(1)">↺ Kembali ke Awal</button>
+        <p style="margin:0 0 6px; font-size:12.5px">Atau pilih slide yang ingin dibuka:</p>
+        <div class="menu-grid">
+          <button class="menu-btn" onclick="go(1)"><b>1</b>Pembuka</button>
+          <button class="menu-btn" onclick="go(2)"><b>2</b>Tujuan</button>
+          <button class="menu-btn" onclick="go(3)"><b>3</b>Apersepsi</button>
+          <button class="menu-btn" onclick="go(4)"><b>4</b>Konsep</button>
+          <button class="menu-btn" onclick="go(5)"><b>5</b>Materi Inti</button>
+          <button class="menu-btn" onclick="go(6)"><b>6</b>Eksplorasi</button>
+          <button class="menu-btn" onclick="go(7)"><b>7</b>Latihan</button>
+          <button class="menu-btn" onclick="go(8)"><b>8</b>Evaluasi</button>
+          <button class="menu-btn" onclick="go(9)"><b>9</b>Hasil</button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+  </div>
+  </div>
+  <footer>Media pembelajaran Kimia — Bentuk Molekul &amp; Hibridisasi (VSEPR)</footer>
+</div>
+
+<script>
+/* ---------- navigasi ---------- */
+const TOTAL = 10;
+document.getElementById('apersepsiInput').addEventListener('input', e=>{
+  document.getElementById('aperLanjutBtn').disabled = e.target.value.trim().length === 0;
+});
+function checkRefleksi(){
+  const r1 = document.getElementById('refleksi1').value.trim();
+  const r2 = document.getElementById('refleksi2').value.trim();
+  const r3 = document.getElementById('refleksi3').value.trim();
+  document.getElementById('hasilLanjutBtn').disabled = !(r1.length && r2.length && r3.length);
+}
+['refleksi1','refleksi2','refleksi3'].forEach(id=>document.getElementById(id).addEventListener('input', checkRefleksi));
+function go(n){
+  const mp=document.getElementById('menuPanel'); if(mp){ mp.style.display='none'; document.getElementById('homeBtn').setAttribute('aria-expanded','false'); }
+  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+  document.querySelector('section[data-step="'+n+'"]').classList.add('active');
+  document.getElementById('stepLabel').textContent = n+' / '+TOTAL;
+  document.getElementById('fill').style.width = (n/TOTAL*100)+'%';
+  window.scrollTo(0,0);
+  if(n===6){
+    if(!threeReady){ requestAnimationFrame(()=>requestAnimationFrame(initThree)); }
+    else { requestAnimationFrame(resizeThree); }
+  }
+  if(n===5){
+    if(!s3Ready && !s3Failed){ requestAnimationFrame(()=>requestAnimationFrame(initThree3)); }
+    else { requestAnimationFrame(resizeThree3); }
+  }
+  if(n===7){
+    if(!s2Ready && !s2Failed){ requestAnimationFrame(()=>requestAnimationFrame(initThree2)); }
+    else { requestAnimationFrame(resizeThree2); }
+  }
+}
+
+/* ---------- materi inti (4 langkah) ---------- */
+const matSteps = [
+  { t:"1. Hitung Domain Elektron Atom Pusat O (pada Molekul H<sub>2</sub>O)", b:"<ul style='margin:0;padding-left:18px'><li>Elektron Valensi O = <b>6</b> elektron.</li><li>Jumlah PEI = <b>2</b> pasang (2 elektron digunakan untuk membentuk 2 ikatan tunggal dengan atom H).</li><li>Jumlah PEB = <b>2</b> pasang (sisa 4 elektron yang tidak digunakan berikatan).</li><li>Total Domain = <b>2 PEI + 2 PEB = 4</b></li></ul>",
+    ex:"Contoh lain: pada NH₃, N (5 elektron valensi) + 3 H → 3 PEI + 1 PEB = 4 domain juga." },
+  { t:"2. Geometri elektron", b:"Dengan 4 domain elektron, susunan paling stabil menurut VSEPR adalah <b>tetrahedral</b> — ini disebut geometri elektron (menghitung PEI + PEB).",
+    ex:"Contoh: CH₄ juga 4 domain, tapi semuanya PEI → geometri elektron & molekulnya sama-sama tetrahedral sempurna." },
+  { t:"3. Geometri molekul", b:"Geometri molekul hanya melihat posisi atom (bukan PEB). Karena 2 dari 4 posisi tetrahedral ditempati PEB yang 'tak terlihat', bentuk H₂O jadi <b>V (bengkok)</b>. Tipe molekulnya AX₂E₂ (A = atom pusat, X = PEI, E = PEB).",
+    ex:"Beda dengan CH₄ (AX₄) yang semua domainnya PEI: pada H₂O dua posisi diisi PEB, sehingga hanya 2 atom H yang terlihat dan bentuknya V." },
+  { t:"4. Sudut ikatan &amp; hibridisasi", b:"Urutan kekuatan tolakan: PEB–PEB &gt; PEB–PEI &gt; PEI–PEI. Tolakan PEB yang lebih kuat menekan pasangan ikatan, sehingga sudut H–O–H mengecil dari 109,5° menjadi <b>≈104,5°</b>. Atom O berhibridisasi <b>sp³</b>.",
+    ex:"Pola serupa terjadi pada NH₃ (1 PEB): sudutnya mengecil juga, jadi ≈107°, hibridisasi N tetap sp³." },
+];
+let matIdx = 0;
+window.addEventListener('DOMContentLoaded', ()=>matStep(0));
+function matStep(d){
+  matIdx = Math.max(0, Math.min(matSteps.length-1, matIdx+d));
+  document.getElementById('matTitle').innerHTML = matSteps[matIdx].t;
+  document.getElementById('matBody').innerHTML = matSteps[matIdx].b;
+  applyStep3(matIdx);
+  document.getElementById('matExample').innerHTML = '<b>Contoh penerapan:</b> '+matSteps[matIdx].ex;
+  document.getElementById('matProg').textContent = 'Langkah '+(matIdx+1)+' dari '+matSteps.length;
+}
+
+/* ---------- kuis generik ---------- */
+function renderQuiz(container, questions, opts){
+  opts = opts || {};
+  let idx = 0, score = 0, answered = false;
+  function render(){
+    const q = questions[idx];
+    let html = '<div class="qprog">Soal '+(idx+1)+' dari '+questions.length+(opts.scored?' · Skor: '+score:'')+'</div>';
+    html += '<p style="color:var(--ink);font-weight:600">'+q.q+'</p>';
+    q.options.forEach((opt,i)=>{ html += '<button class="option" data-i="'+i+'">'+opt+'</button>'; });
+    html += '<div class="feedback" id="fb_'+container.id+'"></div>';
+    container.innerHTML = html;
+    answered = false;
+    container.querySelectorAll('.option').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        if(answered) return; answered = true;
+        const i = +btn.dataset.i;
+        const fb = container.querySelector('#fb_'+container.id);
+        if(i===q.correct){
+          btn.classList.add('correct'); fb.textContent = 'Benar! '+(q.hint||''); fb.className='feedback good';
+          score++;
+        } else {
+          btn.classList.add('wrong');
+          container.querySelectorAll('.option')[q.correct].classList.add('correct');
+          fb.textContent = 'Belum tepat. '+(q.hint||''); fb.className='feedback bad';
+        }
+        setTimeout(()=>{
+          if(idx < questions.length-1){ idx++; render(); }
+          else {
+            if(opts.onDone) opts.onDone(score);
+            if(opts.onComplete) opts.onComplete();
+          }
+        }, 1100);
+      });
+    });
+  }
+  render();
+}
+
+const simQ = [
+  { q:"Saat PEB disembunyikan, bentuk molekul H₂O yang terlihat di simulasi adalah...", options:["Linear","Trigonal planar","Bentuk V (bengkok)","Tetrahedral"], correct:2, hint:"Itu yang disebut geometri molekul." },
+  { q:"Saat PEB ditampilkan, ada berapa total domain elektron di sekitar atom O?", options:["2","3","4","5"], correct:2, hint:"2 PEI + 2 PEB." },
+  { q:"Susunan 4 domain elektron (PEI+PEB) yang kamu lihat di simulasi mengikuti bentuk...", options:["Linear","Segitiga datar","Tetrahedral","Oktahedral"], correct:2, hint:"Ini geometri elektronnya." },
+];
+
+renderQuiz(document.getElementById('simQuizBox'), simQ, {
+  scored:false,
+  onComplete:()=>{ document.getElementById('simNextBtn').disabled = false; }
+});
+document.getElementById('evalDoneCheck').addEventListener('change', e=>{
+  document.getElementById('evalNextBtn').disabled = !e.target.checked;
+});
+function toggleTerm(btn){
+  const card = btn.parentElement, open = !card.classList.contains('open');
+  card.classList.toggle('open', open);
+  btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  btn.querySelector('.term-hint').textContent = open ? 'Sembunyikan ilustrasi ▴' : 'Ketuk untuk lihat ilustrasi ▾';
+}
+function toggleMenu(){
+  const panel = document.getElementById('menuPanel'), btn = document.getElementById('homeBtn');
+  const open = panel.style.display === 'none';
+  panel.style.display = open ? 'block' : 'none';
+  btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  if(open) panel.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+function finishMedia(){
+  document.getElementById('finishBtn').disabled = true;
+  document.getElementById('finishMsg').style.display = 'block';
+}
+
+/* ---------- mesin 3D ringan (canvas 2D, tanpa WebGL & tanpa library) ---------- */
+const vN=(x,y,z)=>{const l=Math.hypot(x,y,z)||1;return[x/l,y/l,z/l];};
+function mixC(c,t){const n=parseInt(c.slice(1),16),f=v=>Math.round(v+(255-v)*t);return 'rgb('+f(n>>16)+','+f((n>>8)&255)+','+f(n&255)+')';}
+function Viewer(stageId,canvasId,getItems){
+  const stage=document.getElementById(stageId),cv=document.getElementById(canvasId),ctx=cv.getContext('2d');
+  let rx=.28,off=.25,t=0,drag=false,px=0,py=0,moved=false;const D=5.4;
+  stage.addEventListener('pointerdown',e=>{drag=true;px=e.clientX;py=e.clientY;try{stage.setPointerCapture(e.pointerId);}catch(_){}});
+  stage.addEventListener('pointermove',e=>{if(!drag)return;off+=(e.clientX-px)*.02;rx+=(e.clientY-py)*.02;px=e.clientX;py=e.clientY;moved=true;});
+  ['pointerup','pointercancel','pointerleave'].forEach(ev=>stage.addEventListener(ev,()=>{drag=false;}));
+  (function frame(){
+    requestAnimationFrame(frame);
+    if(!stage.offsetParent) return;
+    const r=window.devicePixelRatio||1,w=stage.clientWidth,h=stage.clientHeight;
+    if(!w||!h) return;
+    if(cv.width!==Math.round(w*r)||cv.height!==Math.round(h*r)){cv.width=Math.round(w*r);cv.height=Math.round(h*r);}
+    ctx.setTransform(r,0,0,r,0,0);ctx.clearRect(0,0,w,h);
+    t+=.012;const ry=off+(moved?0:Math.sin(t)*.4);
+    const u=Math.min(w,h)*.27,cy=Math.cos(ry),sy=Math.sin(ry),cx=Math.cos(rx),sx=Math.sin(rx);
+    const T=p=>{const x=p[0]*cy+p[2]*sy,z=-p[0]*sy+p[2]*cy,y=p[1],y2=y*cx-z*sx,z2=y*sx+z*cx,s=D/(D-z2);return{x:w/2+x*s*u,y:h/2-y2*s*u,z:z2,s};};
+    const q=[];
+    getItems().forEach(i=>{
+      if(i.k==='l'){const A=T(i.a),B=T(i.b);q.push({z:Math.min(A.z,B.z)-.001,f:()=>{ctx.globalAlpha=i.al||1;ctx.strokeStyle=i.c;ctx.lineWidth=Math.max(1.5,i.w*2*u);ctx.lineCap='round';ctx.setLineDash(i.d?[5,4]:[]);ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.stroke();ctx.setLineDash([]);}});}
+      else if(i.k==='pl'){const P=i.pts.map(T);q.push({z:P.reduce((a,b)=>a+b.z,0)/P.length,f:()=>{ctx.globalAlpha=1;ctx.strokeStyle=i.c;ctx.lineWidth=Math.max(2,i.w*2*u);ctx.lineCap='round';ctx.beginPath();P.forEach((a,k)=>k?ctx.lineTo(a.x,a.y):ctx.moveTo(a.x,a.y));ctx.stroke();}});}
+      else{const P=T(i.p),rr=i.r*P.s*u;q.push({z:P.z,f:()=>{const g=ctx.createRadialGradient(P.x-rr*.35,P.y-rr*.35,rr*.08,P.x,P.y,rr);g.addColorStop(0,mixC(i.c,.65));g.addColorStop(1,i.c);ctx.globalAlpha=i.al||1;ctx.fillStyle=g;ctx.beginPath();ctx.arc(P.x,P.y,rr,0,7);ctx.fill();if(i.st){ctx.strokeStyle='#2E6C99';ctx.lineWidth=1.5;ctx.stroke();}ctx.globalAlpha=1;}});}
+    });
+    q.sort((a,b)=>a.z-b.z).forEach(o=>o.f());ctx.globalAlpha=1;
+  })();
+}
+function waterItems(h,p,ps,peb,tetra,arc,ghost){
+  const hh=h*Math.PI/360,L=1.5,H1=[Math.sin(hh)*L,-Math.cos(hh)*L,0],H2=[-H1[0],H1[1],0];
+  const hp=p*Math.PI/360,pl=1.35,P1=[0,Math.cos(hp)*pl,Math.sin(hp)*pl],P2=[0,P1[1],-P1[2]];
+  const it=[{k:'s',p:[0,0,0],r:.46,c:'#13334A'},{k:'l',a:[0,0,0],b:H1,c:'#2E6C99',w:.08},{k:'l',a:[0,0,0],b:H2,c:'#2E6C99',w:.08},
+    {k:'s',p:H1,r:.28,c:'#DCEFFB',st:1},{k:'s',p:H2,r:.28,c:'#DCEFFB',st:1}];
+  if(peb){it.push({k:'s',p:P1,r:.33*ps,c:'#F2C75C',al:.88},{k:'s',p:P2,r:.33*ps,c:'#F2C75C',al:.88});}
+  if(tetra){const t=[H1,H2,P1,P2];for(let a=0;a<4;a++)for(let b=a+1;b<4;b++)it.push({k:'l',a:t[a],b:t[b],c:'#2E6C99',w:.012,al:.7,d:1});}
+  if(ghost){const g=109.5*Math.PI/360;[1,-1].forEach(sg=>it.push({k:'s',p:[sg*Math.sin(g)*L,-Math.cos(g)*L,0],r:.28,c:'#DCEFFB',al:.3}));}
+  if(arc){const pts=[];for(let i=0;i<=24;i++){const t=-hh+2*hh*i/24;pts.push([Math.sin(t)*.8,-Math.cos(t)*.8,0]);}it.push({k:'pl',pts,c:'#E07B39',w:.03});}
+  return it;
+}
+/* ---------- slide 6: eksplorasi ---------- */
+let threeReady=true, threeFailed=false, showPEB=false;
+function resizeThree(){} function resizeThree2(){} function resizeThree3(){}
+Viewer('stage','c',()=>waterItems(104.5,115,1,showPEB,false,false,false));
+function togglePEB(){
+  showPEB = !showPEB;
+  const badge = document.getElementById('modeBadge'), desc = document.getElementById('descText'), btn = document.getElementById('toggleBtn');
+  if(showPEB){
+    badge.textContent='Geometri elektron';
+    desc.innerHTML='Semua domain (2 PEI + 2 PEB) terlihat, susunannya mendekati <b>tetrahedral</b> (sedikit terdistorsi oleh tolakan PEB).';
+    btn.textContent='Sembunyikan PEB';
+  } else {
+    badge.textContent='Geometri molekul';
+    desc.innerHTML='PEB disembunyikan → bentuk molekul <b>V (bengkok)</b>, sudut ≈104,5°.';
+    btn.textContent='Tampilkan PEB';
+  }
+}
+
+/* ---------- simulator 3D slide latihan (siswa menyusun sendiri) ---------- */
+let s2Ready=true, s2Failed=false, s2Solved=false;
+const s2State = { nH:0, nP:0, angle:180 };
+const S2_MAXH=6, S2_MAXP=4, S2_MAXD=6;
+function s2Dirs(D){
+  const V=vN,ring=f=>[0,1,2].map(k=>f(k*2*Math.PI/3));
+  if(D===1) return [V(0,-1,0)];
+  if(D===2) return [V(1,0,0),V(-1,0,0)];
+  if(D===3) return ring(a=>V(Math.sin(a),-Math.cos(a),0));
+  if(D===4) return [V(1,1,1),V(1,-1,-1),V(-1,1,-1),V(-1,-1,1)];
+  if(D===5) return [V(0,1,0),V(0,-1,0)].concat(ring(a=>V(Math.cos(a),0,Math.sin(a))));
+  if(D===6) return [V(1,0,0),V(-1,0,0),V(0,1,0),V(0,-1,0),V(0,0,1),V(0,0,-1)];
+  return [];
+}
+const S2_PEBORDER = {1:[0],2:[0,1],3:[0,1,2],4:[0,1,2,3],5:[2,3,4,0,1],6:[4,5,0,1]};
+function s2Targets(){
+  const {nH,nP,angle} = s2State, D = nH+nP, H=[], P=[];
+  if(nH===2 && nP>=1 && nP<=2){
+    const hh=angle*Math.PI/360, L=1.5;
+    H.push([Math.sin(hh)*L,-Math.cos(hh)*L,0],[-Math.sin(hh)*L,-Math.cos(hh)*L,0]);
+    const hp=115*Math.PI/360, pl=1.35;
+    P.push([0,Math.cos(hp)*pl,Math.sin(hp)*pl]);
+    if(nP>=2) P.push([0,Math.cos(hp)*pl,-Math.sin(hp)*pl]);
+    return {H,P};
+  }
+  const dirs = s2Dirs(D), peb = (S2_PEBORDER[D]||[]).slice(0,nP);
+  dirs.forEach((d,i)=>{ if(peb.indexOf(i)>=0) P.push(d.map(x=>x*1.35)); else H.push(d.map(x=>x*1.5)); });
+  return {H,P};
+}
+const s2Slots={h:[],p:[]};
+for(let i=0;i<S2_MAXH;i++) s2Slots.h.push({pos:[0,0,0],pop:0});
+for(let i=0;i<S2_MAXP;i++) s2Slots.p.push({pos:[0,0,0],pop:0});
+function s2Step(slot,active,tgt){
+  const t=active?1:0;
+  if(active && tgt){ if(slot.pop<.05) slot.pos=tgt.slice(); else slot.pos=slot.pos.map((v,i)=>v+(tgt[i]-v)*.16); }
+  const d=t-slot.pop; slot.pop = Math.abs(d)<.004 ? t : slot.pop+d*.16;
+  return slot.pos.map(v=>v*slot.pop);
+}
+Viewer('stage2','c2',()=>{
+  const T=s2Targets(), it=[{k:'s',p:[0,0,0],r:.46,c:'#13334A'}];
+  s2Slots.h.forEach((s,i)=>{ const v=s2Step(s,i<s2State.nH,T.H[i]); if(s.pop>.02){ it.push({k:'l',a:[0,0,0],b:v,c:'#2E6C99',w:.07},{k:'s',p:v,r:.28*s.pop,c:'#DCEFFB',st:1}); } });
+  s2Slots.p.forEach((s,i)=>{ const v=s2Step(s,i<s2State.nP,T.P[i]); if(s.pop>.02) it.push({k:'s',p:v,r:.33*s.pop,c:'#F2C75C',al:.88}); });
+  return it;
+});
+const S2_ELEC = {2:'Linear',3:'Trigonal planar',4:'Tetrahedral',5:'Bipiramida trigonal',6:'Oktahedral'};
+function s2Shape(){
+  const {nH,nP,angle} = s2State, D = nH+nP;
+  if(nH===0) return 'Belum ada atom terikat';
+  if(nH===1) return 'Linear (2 atom)';
+  if(nH===2) return (nP>=1 && nP<=2 && angle<172) ? 'Bengkok (V)' : 'Linear';
+  const tab = {'3-0':'Trigonal planar','3-1':'Piramida trigonal','3-2':'Bentuk T','4-0':'Tetrahedral','4-1':'Jungkat-jungkit','4-2':'Segi empat planar','5-0':'Bipiramida trigonal','5-1':'Piramida segi empat','6-0':'Oktahedral'};
+  return tab[nH+'-'+nP] || 'Bentuk khusus';
+}
+function updateBuildUI(){
+  const {nH,nP,angle} = s2State, D = nH+nP;
+  document.getElementById('hCount').textContent = nH;
+  document.getElementById('pCount').textContent = nP;
+  document.getElementById('hMinus').disabled = nH<=0 || s2Solved;
+  document.getElementById('pMinus').disabled = nP<=0 || s2Solved;
+  document.getElementById('hPlus').disabled = nH>=S2_MAXH || D>=S2_MAXD || s2Solved;
+  document.getElementById('pPlus').disabled = nP>=S2_MAXP || D>=S2_MAXD || s2Solved;
+  document.getElementById('resetBtn').disabled = s2Solved;
+  const manual = (nH===2 && nP>=1 && nP<=2);
+  const sl = document.getElementById('angleSlider');
+  sl.disabled = !manual || s2Solved;
+  document.getElementById('angleVal').textContent = String(angle).replace('.',',');
+  document.getElementById('modeBadge2').textContent = D===0 ? 'Atom O saja' : s2Shape();
+  const tag = document.getElementById('angleTag');
+  if(manual){ tag.style.display='block'; tag.textContent='Sudut H–O–H: '+String(angle).replace('.',',')+'°'; } else tag.style.display='none';
+  let html = 'PEI: <b>'+nH+'</b> · PEB: <b>'+nP+'</b> · Domain: <b>'+D+'</b>';
+  if(D>=2) html += '<br>Geometri elektron: <b>'+S2_ELEC[D]+'</b>';
+  if(nH>=1) html += ' · Bentuk molekul: <b>'+s2Shape()+'</b>';
+  if(!manual && D>0) html += '<br><span style="font-size:12px">Penggeser sudut aktif jika atom terikat = 2 dan PEB 1–2.</span>';
+  document.getElementById('shapeInfo').innerHTML = html;
+}
+function chg(key,delta){
+  if(s2Solved) return;
+  const nH = s2State.nH + (key==='nH'?delta:0), nP = s2State.nP + (key==='nP'?delta:0);
+  if(nH<0||nP<0||nH>S2_MAXH||nP>S2_MAXP||nH+nP>S2_MAXD) return;
+  s2State[key] += delta; clearFb(); updateBuildUI();
+}
+function resetBuild(){
+  if(s2Solved) return;
+  s2State.nH=0; s2State.nP=0; s2State.angle=180;
+  document.getElementById('angleSlider').value=180; clearFb(); updateBuildUI();
+}
+function clearFb(){ const f=document.getElementById('shapeFb'); f.textContent=''; f.className='feedback'; }
+document.getElementById('angleSlider').addEventListener('input', e=>{
+  if(s2Solved) return;
+  s2State.angle = parseFloat(e.target.value); clearFb(); updateBuildUI();
+});
+function checkShape(){
+  const fb = document.getElementById('shapeFb'), {nH,nP,angle} = s2State;
+  let msg, ok=false;
+  if(nH===0) msg='Tambahkan atom terikat dulu dengan tombol +.';
+  else if(nH!==2) msg='Susunanmu menghasilkan bentuk '+s2Shape()+' dengan '+nH+' atom terikat. H₂O hanya punya 2 atom H, sesuaikan jumlahnya.';
+  else if(nP<2) msg='Atom O punya 6 elektron valensi: 2 dipakai berikatan dengan H, sisa 4 elektron = 2 PEB. Tambahkan PEB-nya.';
+  else if(nP>2) msg='PEB terlalu banyak. Sisa elektron O hanya 4 (6 − 2 untuk ikatan), jadi cukup 2 PEB.';
+  else if(angle>=172) msg='Belum tepat. Dengan 2 PEB, tolakan elektron membuat atom H tidak bisa lurus. Coba kecilkan sudutnya.';
+  else if(angle>=108) msg='Mendekati! Tolakan PEB lebih kuat dari PEI, jadi sudutnya sedikit lebih kecil dari sudut tetrahedral 109,5°.';
+  else if(angle>=100){ ok=true; msg='Benar! H₂O berbentuk V (bengkok) dengan sudut ≈104,5°. Dua PEB menolak pasangan ikatan sehingga atom H tidak lurus.'; }
+  else msg='Terlalu rapat. Tolakan PEB mengecilkan sudut, tetapi hanya sampai ≈104,5°. Coba besarkan sedikit.';
+  fb.textContent = msg; fb.className = 'feedback ' + (ok?'good':'bad');
+  if(ok){
+    s2Solved = true; updateBuildUI();
+    document.getElementById('checkShapeBtn').disabled = true;
+    document.getElementById('latihanNextBtn').disabled = false;
+  }
+}
+updateBuildUI();
+
+/* ---------- model 3D materi inti (slide 5) ---------- */
+let s3Ready=true, s3Failed=false;
+let s3Cur = {h:109.5, p:109.5, ps:1}, s3Tgt = {h:109.5, p:109.5, ps:1};
+const S3 = [
+  { h:109.5, p:109.5, ps:1,   peb:true,  tetra:false, arc:false, badge:'4 domain: 2 PEI + 2 PEB' },
+  { h:109.5, p:109.5, ps:1,   peb:true,  tetra:true,  arc:false, badge:'Geometri elektron: tetrahedral' },
+  { h:104.5, p:115,   ps:1,   peb:false, tetra:false, arc:false, badge:'Geometri molekul: V (bengkok)' },
+  { h:104.5, p:115,   ps:1.25,peb:true,  tetra:false, arc:true,  badge:'H–O–H ≈ 104,5° · sp³' }
+];
+function applyStep3(i){
+  const c = S3[i]; s3Tgt = {h:c.h, p:c.p, ps:c.ps};
+  document.getElementById('modeBadge3').textContent = c.badge;
+}
+Viewer('stage3','c3',()=>{
+  ['h','p','ps'].forEach(k=>{ const d=s3Tgt[k]-s3Cur[k]; s3Cur[k] = Math.abs(d)>0.005 ? s3Cur[k]+d*0.12 : s3Tgt[k]; });
+  const c=S3[matIdx];
+  return waterItems(s3Cur.h,s3Cur.p,s3Cur.ps,c.peb,c.tetra,c.arc,c.arc);
+});
+</script>
+</body>
+</html>
